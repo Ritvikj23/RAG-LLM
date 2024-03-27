@@ -19,3 +19,15 @@ print(dataset_df.isnull().sum())
 dataset_df = dataset_df.drop(columns=['plot_embedding'])
 
 dataset_df.head(5)
+
+from llama_index.core.settings import Settings
+from llama_index.embeddings import openai
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+embed_model = OpenAIEmbedding(model="text-embedding-3-small", dimensions=256)
+
+llm = OpenAIEmbedding()
+
+Settings.llm = llm
+
+Settings.embed_model = embed_model
