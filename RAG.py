@@ -5,7 +5,7 @@ dataset = load_dataset("AIatMongoDB/embedded_movies")
 
 dataset_df = pd.DataFrame(dataset['train'])
 
-dataset_df.head(5)
+print(dataset_df.head(5))
 
 # Remove data point where plot column is missing
 
@@ -18,7 +18,7 @@ print(dataset_df.isnull().sum())
 
 dataset_df = dataset_df.drop(columns=['plot_embedding'])
 
-dataset_df.head(5)
+print(dataset_df.head(5))
 
 from llama_index.core.settings import Settings
 from llama_index.embeddings import openai
@@ -76,3 +76,40 @@ print(
     "\nThe Embedding model sees this: \n",
     llama_documents[0].get_content(metadata_mode=MetadataMode.EMBED),
 )
+
+from llama_index.core.node_parser import SentenceSplitter
+
+parser = SentenceSplitter()
+nodes = parser.get_nodes_from_documents_(llama_documents)
+
+for node in nodes:
+    node_embedding = embed_model.get_text_embedding(node.get_content(metadata_mode = "all"))
+    node.embedding = node_embedding
+
+
+import pymongo
+from google.colab import userdata
+
+def get_mongo_client(mongo_uri):
+    """Establish connection to MongoDB"""
+    try:
+        client = pymongo.MongoClient(mongo_uri)
+        print("Connection to MongoDB successful")
+        return client
+    except pymongo.errors.ConnectionFailure as e:
+        print(f"Connection failed: {e}")
+        return None
+    
+mongo_uri = userdata.get('MONGO_URI_2')
+if not mongo_uri:
+    print("MONGO_URI not set in environment variables")
+
+mongo_client = get_mongo_client(mongo_uri)
+
+DB_NAME="movies"
+COLLECTION_NAME="movies_records"
+
+db = mongo_client[DB_NAME]
+collection = db[COLLECTION_NAME]
+
+collection.delete_many({})
