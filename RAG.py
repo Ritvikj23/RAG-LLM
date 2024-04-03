@@ -55,6 +55,8 @@ for document in documents_list:
     document["imdb"] = json.dumps(document["imdb"])
     document["awards"] = json.dumps(document["awards"])
 
+    # print(document)
+
     # Create a Document object with the text and excluded metadata for llm and embedding models
     llama_document = Document(
         text=document["fullplot"],
@@ -62,10 +64,18 @@ for document in documents_list:
         excluded_llm_metadata_keys=["fullplot", "metacritic"],
         excluded_embed_metadata_keys=["fullplot", "metacritic", "poster", "num_mflix_comments", "runtime", "rated"],
         metadata_template="{key}=>{value}",
-        text_template="Metadata: {metadata_str}\n-----\nContent: {content}",
+        text_template="Metadata: {metadata_str} \n-----\n Content: {content}"
         )
     
+    print("this is the llama document ") 
+    print(llama_document)
+    print("\n" + "\n" + "\n" + "\n" + "\n" + "\n" + "\n")
+
     llama_documents.append(llama_document)
+
+    print("document appended")
+
+    # print(llama_documents)
 
 # Observing an example of what the LLM and Embedding model receive as input
 print(
