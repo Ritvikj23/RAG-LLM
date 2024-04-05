@@ -44,6 +44,8 @@ documents_list = json.loads(documents_json)
 
 llama_documents = []
 
+# count = 0
+
 for document in documents_list:
     # Value for metadata must be one of (str, int, float, None)
     document["writers"] = json.dumps(document["writers"])
@@ -56,6 +58,12 @@ for document in documents_list:
     document["awards"] = json.dumps(document["awards"])
 
     # print(document)
+
+    # if count == 96:
+    #     print(document)
+
+    if document["fullplot"] == None:
+        document["fullplot"] = "Not Given"
 
     # Create a Document object with the text and excluded metadata for llm and embedding models
     llama_document = Document(
@@ -75,6 +83,9 @@ for document in documents_list:
 
     print("document appended")
 
+    # count += 1
+    # print(count)
+
     # print(llama_documents)
 
 # Observing an example of what the LLM and Embedding model receive as input
@@ -90,36 +101,36 @@ print(
 from llama_index.core.node_parser import SentenceSplitter
 
 parser = SentenceSplitter()
-nodes = parser.get_nodes_from_documents_(llama_documents)
+nodes = parser.get_nodes_from_documents(llama_documents)
 
 for node in nodes:
     node_embedding = embed_model.get_text_embedding(node.get_content(metadata_mode = "all"))
     node.embedding = node_embedding
 
 
-import pymongo
-from google.colab import userdata
+# import pymongo
+# from google.colab import userdata
 
-def get_mongo_client(mongo_uri):
-    """Establish connection to MongoDB"""
-    try:
-        client = pymongo.MongoClient(mongo_uri)
-        print("Connection to MongoDB successful")
-        return client
-    except pymongo.errors.ConnectionFailure as e:
-        print(f"Connection failed: {e}")
-        return None
+# def get_mongo_client(mongo_uri):
+#     """Establish connection to MongoDB"""
+#     try:
+#         client = pymongo.MongoClient(mongo_uri)
+#         print("Connection to MongoDB successful")
+#         return client
+#     except pymongo.errors.ConnectionFailure as e:
+#         print(f"Connection failed: {e}")
+#         return None
     
-mongo_uri = userdata.get('MONGO_URI_2')
-if not mongo_uri:
-    print("MONGO_URI not set in environment variables")
+# mongo_uri = userdata.get('MONGO_URI_2')
+# if not mongo_uri:
+#     print("MONGO_URI not set in environment variables")
 
-mongo_client = get_mongo_client(mongo_uri)
+# mongo_client = get_mongo_client(mongo_uri)
 
-DB_NAME="movies"
-COLLECTION_NAME="movies_records"
+# DB_NAME="movies"
+# COLLECTION_NAME="movies_records"
 
-db = mongo_client[DB_NAME]
-collection = db[COLLECTION_NAME]
+# db = mongo_client[DB_NAME]
+# collection = db[COLLECTION_NAME]
 
-collection.delete_many({})
+# collection.delete_many({})
