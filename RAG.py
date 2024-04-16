@@ -1,6 +1,8 @@
 from datasets import load_dataset
 import pandas as pd
 
+# print(process.env.API_KEY)
+
 dataset = load_dataset("AIatMongoDB/embedded_movies")
 
 dataset_df = pd.DataFrame(dataset['train'])
@@ -107,30 +109,31 @@ for node in nodes:
     node_embedding = embed_model.get_text_embedding(node.get_content(metadata_mode = "all"))
     node.embedding = node_embedding
 
+print("parser part done")
 
-# import pymongo
-# from google.colab import userdata
+import pymongo
+from google.colab import userdata
 
-# def get_mongo_client(mongo_uri):
-#     """Establish connection to MongoDB"""
-#     try:
-#         client = pymongo.MongoClient(mongo_uri)
-#         print("Connection to MongoDB successful")
-#         return client
-#     except pymongo.errors.ConnectionFailure as e:
-#         print(f"Connection failed: {e}")
-#         return None
+def get_mongo_client(mongo_uri):
+    """Establish connection to MongoDB"""
+    try:
+        client = pymongo.MongoClient(mongo_uri)
+        print("Connection to MongoDB successful")
+        return client
+    except pymongo.errors.ConnectionFailure as e:
+        print(f"Connection failed: {e}")
+        return None
     
-# mongo_uri = userdata.get('MONGO_URI_2')
-# if not mongo_uri:
-#     print("MONGO_URI not set in environment variables")
+mongo_uri = userdata.get('MONGO_URI_2')
+if not mongo_uri:
+    print("MONGO_URI not set in environment variables")
 
-# mongo_client = get_mongo_client(mongo_uri)
+mongo_client = get_mongo_client(mongo_uri)
 
-# DB_NAME="movies"
-# COLLECTION_NAME="movies_records"
+DB_NAME="movies"
+COLLECTION_NAME="movies_records"
 
-# db = mongo_client[DB_NAME]
-# collection = db[COLLECTION_NAME]
+db = mongo_client[DB_NAME]
+collection = db[COLLECTION_NAME]
 
-# collection.delete_many({})
+collection.delete_many({})
